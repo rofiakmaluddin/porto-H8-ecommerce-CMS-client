@@ -1,5 +1,6 @@
 <template>
   <div style="max-width:30em" class="shadow p-3 mt-5 mb-5 bg-white rounded container">
+    <div>Back</div>
     <h2>Edit Product</h2>
     <br>
     <form @submit.prevent="editProduct">

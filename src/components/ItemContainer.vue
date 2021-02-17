@@ -30,4 +30,7 @@ export default {
   #items{
     display: flex;
   }
+  #items ul li{
+    list-style-type: none;
+  }
 </style>

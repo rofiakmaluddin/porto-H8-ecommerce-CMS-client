@@ -18,32 +18,12 @@
 </template>
 
 <script>
-import axios from '@/api/axios'
 export default {
   name: 'Login',
   data () {
     return {
       email: '',
       password: ''
-    }
-  },
-  methods: {
-    login () {
-      axios({
-        method: 'POST',
-        url: 'login',
-        data: {
-          email: this.email,
-          password: this.password
-        }
-      }).then(({ data }) => {
-        console.log(data)
-      }).catch(err => {
-        console.log(err)
-      }).then(_ => {
-        this.email = ''
-        this.password = ''
-      })
     }
   }
 }

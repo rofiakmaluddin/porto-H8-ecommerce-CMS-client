@@ -8,7 +8,21 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: Home,
+    children: [
+      {
+        name: 'Category',
+        path: '/category',
+        component: () => import('../components/Category.vue'),
+        children: [
+          {
+            name: 'ItemFromCategory',
+            path: '/:category',
+            component: () => import('../components/ItemContainer.vue')
+          }
+        ]
+      }
+    ]
   },
   {
     path: '/login',
