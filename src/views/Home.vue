@@ -1,23 +1,33 @@
 <template>
   <div id="home">
     <Sidebar />
-    <Category />
-    <ItemContainer />
+    <CategoryContainer />
+    <div style="width: 100%;" id="itemSection">
+      <div class="categoryName p-3 pb-1">{{ chosenCategory }}</div>
+      <ItemContainer />
+    </div>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import Sidebar from '@/components/Sidebar.vue'
-import Category from '@/components/Category.vue'
-import ItemContainer from '../components/ItemContainer.vue'
-
+import CategoryContainer from '@/components/CategoryContainer'
+import ItemContainer from '@/components/ItemContainer'
 export default {
   name: 'Home',
   components: {
     Sidebar,
-    Category,
+    CategoryContainer,
     ItemContainer
+  },
+  computed: {
+    products () {
+      return this.$store.state.products
+    },
+    chosenCategory () {
+      return this.$store.state.chosenCategory
+    }
   }
 }
 </script>
@@ -25,6 +35,25 @@ export default {
 <style>
   #home{
     height: 100%;
+    width: 100%;
     display: flex;
+  }
+  #sidebar{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    max-width: 9em;
+    height: 100%;
+  }
+  .white{
+    color: white;
+  }
+  #category{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 13em;
+    height: 100%;
+    overflow: auto;
   }
 </style>

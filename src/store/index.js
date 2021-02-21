@@ -1,53 +1,39 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from '../api/axios'
+import router from '../router'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    email: '',
-    password: '',
+    errors: [],
     categories: [],
-    products: [],//length nya sesuai dengan jumlah categories
-    name: '',
-    img_url: '',
-    price: 0,
-    stock: 0,
-    category: '',
-    product: {}
+    products: [], // length nya sesuai dengan jumlah categories
+    product: {},
+    chosenCategory: 'All Categories'
   },
   mutations: {
-    setEmailPassword (state, payload) {
-      const {email,password} = payload
-      state.email = email
-      state.password = password
+    setErrors (state, payload) {
+      const { errors } = payload
+      state.errors = errors
     },
     setCategories (state, payload) {
-      const {categories} = payload
-      state.categories = categories
+      state.categories = payload
     },
     setProducts (state, payload) {
-      const {products} = payload
-      state.products = products
-    },
-    setInputData (state, payload) {
-      const {name,img_url,price,stock,category} = payload
-      state.name = name
-      state.img_url = img_url
-      state.price = price
-      state.stock = stock
-      state.category = category
+      state.products = payload
     },
     setProduct (state, payload) {
-      const {product} = payload
-      state.product = product
+      state.product = payload
+    },
+    setChosenCategory (state, payload) {
+      state.chosenCategory = payload
     }
   },
   actions: {
-    login (context) {
-      let email = context.state.email
-      let password = context.state.password
+    login (context, payload) {
+      const { email, password } = payload
       axios({
         method: 'POST',
         url: 'login',
@@ -56,115 +42,106 @@ export default new Vuex.Store({
           password
         }
       }).then(({ data }) => {
-        console.log(data)
+        localStorage.setItem('access_token', data.access_token)
+        router.push('/')
       }).catch(err => {
         console.log(err)
-      }).then(_ => {
-        context.commit('setEmailPassword', {
-          email: '',
-          password: ''
+        context.commit('setErrors', {
+          errors: err
         })
       })
     },
-    addProduct (context) {
-      let name = context.state.name
-      let img_url = context.state.img_url
-      let price = context.state.price
-      let stock = context.state.stock
-      let category = context.state.category
+    addProduct (context, payload) {
+      console.log(payload)
+      const { name, imgUrl, price, stock, category } = payload
       axios({
         method: 'POST',
         url: 'products',
         headers: {
-          access_token : localStorage.getItem('access_token')
+          access_token: localStorage.getItem('access_token')
         },
         data: {
           name,
-          img_url,
+          img_url: imgUrl,
           price,
           stock,
           category
         }
-      }).then(({data}) => {
-        console.log(data);
+      }).then(({ data }) => {
+        console.log(data)
       }).catch(err => {
-        console.log(err);
-      }).then(_ => {
-        context.commit('setInputData', {
-          name: '',
-          img_url: '',
-          price: 0,
-          stock: 0,
-          category: ''
+        console.log(err)
+        context.commit('setErrors', {
+          errors: err
         })
       })
     },
-    fetchAllProduct (context) {
+    fetchAllProduct (context, chosenCategory) {
       axios({
         method: 'GET',
         url: 'products',
         headers: {
           access_token: localStorage.getItem('access_token')
         }
-      }).then(({data}) => {
-        context.commit('setCategories', {
-          categories: []
-        })
-        context.commit('setProducts', {
-          products: []
-        })
-        let categories = context.state.categories
-        let categoriesTemp = []
-        let productsTemp = []
+      }).then(({ data }) => {
+        context.commit('setCategories', [])
+        const categoriesTemp = []
         data.forEach(e => {
-          for (let i = 0; i < categories.length; i++) {
-            if (e.category !== categories[i]) {
+          if (categoriesTemp.length === 0) {
+            categoriesTemp.push(e.category)
+          } else {
+            let flag = false
+            for (let i = 0; i < categoriesTemp.length; i++) {
+              if (categoriesTemp[i].toLowerCase() === e.category.toLowerCase()) {
+                flag = true
+              }
+            }
+            if (!flag) {
               categoriesTemp.push(e.category)
             }
           }
         })
-        categories.forEach(e => {
-          let temp = []
-          for (let i = 0; i < data.length; i++) {
-            if (e === data.category) {
-              temp.push(data)
-            }
-          }
-          productsTemp.push(temp)
-        })
-        context.commit('setCategories', {
-          categories: categoriesTemp
-        })
-        context.commit('setProducts', {
-          products: productsTemp
-        })
+        context.commit('setCategories', categoriesTemp)
+        console.log(context.state.categories, '>>> category yg ada')
+        context.commit('setProducts', [])
+        let productsTemp
+        console.log(chosenCategory, '>>> chosenCategory')
+        if (!chosenCategory) {
+          console.log('masuk !false')
+          productsTemp = data
+          context.commit('setChosenCategory', 'All Category')
+        } else {
+          productsTemp = data.filter(e => e.category.toLowerCase() === chosenCategory.toLowerCase())
+          context.commit('setChosenCategory', chosenCategory)
+        }
+        context.commit('setProducts', productsTemp)
+        console.log(context.state.products, '>>> products by category')
       }).catch(err => {
         console.log(err)
+        context.commit('setErrors', {
+          errors: err
+        })
       })
     },
     fetchProduct (context, payload) {
-      const {id} = payload
       axios({
         method: 'GET',
-        url: `products/${id}`,
+        url: `products/${payload}`,
         headers: {
-          access_token = localStorage.getItem('access_token')
+          access_token: localStorage.getItem('access_token')
         }
-      }).then(({data}) => {
-        context.commit('setProduct', {
-          product = data
-        })
+      }).then(({ data }) => {
+        context.commit('setProduct', data)
+        router.push('/editPage')
       }).catch(err => {
-        console.log(err);
+        console.log(err)
+        context.commit('setErrors', {
+          errors: err
+        })
       })
     },
     updateProduct (context, payload) {
-      let name = context.state.product.name
-      let img_url = context.state.product.img_url
-      let price = context.state.product.price
-      let stock = context.state.product.stock
-      let category = context.state.product.category
-      const {id} = payload
+      const { name, imgUrl, price, stock, category, id } = payload
       axios({
         method: 'PUT',
         url: `products/${id}`,
@@ -173,37 +150,36 @@ export default new Vuex.Store({
         },
         data: {
           name,
-          img_url,
+          img_url: imgUrl,
           price,
           stock,
           category
         }
-      }).then(({data}) => {
-        console.log(data);
+      }).then(({ data }) => {
+        console.log(data)
+        router.push('/')
       }).catch(err => {
-        console.log(err);
-      }).then(_ => {
-        context.commit('setInputData', {
-          name: '',
-          img_url: '',
-          price: 0,
-          stock: 0,
-          category: ''
+        console.log(err)
+        context.commit('setErrors', {
+          errors: err
         })
       })
     },
-    destroy(context, payload) {
-      const {id} = payload
+    destroy (context, payload) {
       axios({
         method: 'DELETE',
-        url: `/products/${id}`,
+        url: `/products/${payload}`,
         headers: {
           access_token: localStorage.getItem('access_token')
         }
-      }).then(({data}) => {
-        console.log(data);
+      }).then(({ data }) => {
+        console.log(data)
+        context.dispatch('fetchAllProduct', false)
       }).catch(err => {
-        console.log(err);
+        console.log(err)
+        context.commit('setErrors', {
+          errors: err
+        })
       })
     }
   },
