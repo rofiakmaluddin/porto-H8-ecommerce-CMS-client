@@ -79,7 +79,7 @@ export default {
     this.editData.price = this.product.price
     this.editData.stock = this.product.stock
     this.editData.category = this.product.category
-    console.log(this.editData, '>>> dihalaman edit')
+    // console.log(this.editData, '>>> dihalaman edit')
   }
 }
 </script>
