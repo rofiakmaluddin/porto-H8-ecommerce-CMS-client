@@ -28,6 +28,9 @@ export default {
     chosenCategory () {
       return this.$store.state.chosenCategory
     }
+  },
+  created () {
+    this.$store.dispatch('fetchAllProduct', false)
   }
 }
 </script>
