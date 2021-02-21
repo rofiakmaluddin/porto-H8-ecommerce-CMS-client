@@ -2,13 +2,14 @@
   <div id="category" class="pt-4">
     <button @click.prevent="goToAddPage" style="max-width: 7em;" type="button" class="btn btn-primary">Create New</button>
     <div id="categoryContainer" class="mt-3">
+      <h5>Categories:</h5>
       <ul>
-        <li @click.prevent="chooseCategory(false)"><a href="">All Categories</a></li>
+        <li @click.prevent="chooseCategory(false)"><a class="black" href="">All Categories</a></li>
         <li
         v-for="(category, index) in categories"
         :key="index"
         @click.prevent="chooseCategory(category)"
-        ><a href="">{{ category }}</a></li>
+        ><a class="black" href="">{{ category }}</a></li>
       </ul>
     </div>
   </div>

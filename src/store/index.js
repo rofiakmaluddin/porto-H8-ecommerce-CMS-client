@@ -114,6 +114,34 @@ export default new Vuex.Store({
           productsTemp = data.filter(e => e.category.toLowerCase() === chosenCategory.toLowerCase())
           context.commit('setChosenCategory', chosenCategory)
         }
+        productsTemp.forEach(e => {
+          e.price = e.price.toString().split('').reverse()
+          const arrResult = []
+          let arrTemp = []
+          for (let i = 0; i < e.price.length; i++) {
+            if (i % 3 !== 0) {
+              arrTemp.push(e.price[i])
+            } else {
+              // arrTemp.reverse()
+              if (arrTemp.length !== 0) {
+                arrResult.push(arrTemp)
+              }
+              arrTemp = []
+              arrTemp.push(e.price[i])
+            }
+          }
+          if (arrTemp.length !== 0) {
+            arrResult.push(arrTemp)
+          }
+          for (let j = 0; j < arrResult.length; j++) {
+            arrResult[j].reverse()
+          }
+          arrResult.reverse()
+          for (let k = 0; k < arrResult.length; k++) {
+            arrResult[k] = arrResult[k].join('')
+          }
+          e.price = 'Rp. ' + arrResult.join('.') + ',00'
+        })
         context.commit('setProducts', productsTemp)
         console.log(context.state.products, '>>> products by category')
       }).catch(err => {

@@ -3,7 +3,7 @@
     <Sidebar />
     <CategoryContainer />
     <div style="width: 100%;" id="itemSection">
-      <div class="categoryName p-3 pb-1">{{ chosenCategory }}</div>
+      <div class="display-4 categoryName p-3"><b class="p-2">{{ chosenCategory }}</b></div>
       <ItemContainer />
     </div>
   </div>
@@ -48,6 +48,9 @@ export default {
   .white{
     color: white;
   }
+  .black{
+    color: black;
+  }
   #category{
     display: flex;
     flex-direction: column;
@@ -55,5 +58,12 @@ export default {
     width: 13em;
     height: 100%;
     overflow: auto;
+    background-color: lightgrey;
+  }
+  a{
+    text-decoration: none;
+  }
+  .categoryName{
+    font-size: 3em;
   }
 </style>

@@ -4,7 +4,7 @@
         <div class="white">Home</div>
       </div>
       <div id="botBar" class="p-3">
-        <div @click.prevent="logout" class="white"><a href="">Logout</a></div>
+        <div @click.prevent="logout"><a class="white" href="">Logout</a></div>
       </div>
     </div>
 </template>
