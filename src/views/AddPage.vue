@@ -49,13 +49,6 @@ export default {
   },
   methods: {
     backBtn () {
-      this.addData = {
-        name: '',
-        imgUrl: '',
-        price: 0,
-        stock: 0,
-        category: ''
-      }
       this.$router.push('/').catch(err => { console.log(err) })
     },
     addProduct () {

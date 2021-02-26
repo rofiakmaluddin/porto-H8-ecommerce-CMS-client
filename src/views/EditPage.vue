@@ -55,13 +55,6 @@ export default {
       this.$router.push('/').catch(err => { console.log(err) })
     },
     backBtn () {
-      this.editData = {
-        name: '',
-        imgUrl: '',
-        price: 0,
-        stock: 0,
-        category: ''
-      }
       this.$router.push('/').catch(err => { console.log(err) })
     }
   },
